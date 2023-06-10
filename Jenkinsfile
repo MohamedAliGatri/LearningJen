@@ -11,8 +11,8 @@ pipeline{
         }
         stage("SonarTest integration"){
             steps{
-                withSonarQubeEnv() {
-                    sh "mvn sonar:sonar -Dsonar.projectKey=project -Dsonar.projectName='project'"
+                withSonarQubeEnv(installationName: 'sonar') {
+                    sh "mvn sonar:sonar"
                 }
             }
         }
