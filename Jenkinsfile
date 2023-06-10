@@ -11,7 +11,7 @@ pipeline{
         }
         stage("SonarTest integration"){
             steps{
-                sh "mvn sonar:sonar"
+                sh "mvn sonar:sonar -Dsonar.projectKey=project -Dsonar.projectName='project'"
             }
         }
     }
