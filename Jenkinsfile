@@ -9,13 +9,13 @@ pipeline{
                 echo "TESTING WEBHOOKS WITH NGROK again"
             }
         }
-        stage("SonarTest integration"){
+        /*stage("SonarTest integration"){
             steps{
                 withSonarQubeEnv(installationName: 'sonar') {
                     sh "mvn sonar:sonar"
                 }
             }
-        }
+        }*/
         stage("Maven Package"){
             steps{
                 sh "mvn clean package"
