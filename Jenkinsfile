@@ -16,6 +16,11 @@ pipeline{
                 }
             }
         }
+        stage("Maven Package"){
+            steps{
+                sh "mvn clean package"
+            }
+        }
             stage('Push to Nexus') {
               steps {
                 // Configure Nexus repository credentials
