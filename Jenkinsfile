@@ -28,7 +28,7 @@ pipeline{
                     nexusUrl: 'http://192.168.0.2:8081/',
                     groupId: 'com.esprit.examen',
                     version: '1.0',
-                    repository: learning',
+                    repository: 'learning',
                     credentialsId: 'nexus',
                     artifacts: [
                       [
