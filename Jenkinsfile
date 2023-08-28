@@ -9,16 +9,16 @@ pipeline{
                 echo "TESTING WEBHOOKS WITH NGROK again"
             }
         }
+        stage("Maven Package"){
+            steps{
+                sh "mvn clean package"
+            }
+        }
         stage("SonarTest integration"){
             steps{
                 withSonarQubeEnv(installationName: 'SonarQubeServer') {
                     sh "mvn sonar:sonar"
                 }
-            }
-        }
-        stage("Maven Package"){
-            steps{
-                sh "mvn clean package"
             }
         }
             stage('Push to Nexus') {
