@@ -1,7 +1,7 @@
 pipeline{
     agent any
     tools{
-        maven "MAVEN"
+        maven "M2_HOME"
     }
     stages{
         stage("Git checkOut"){
@@ -9,13 +9,13 @@ pipeline{
                 echo "TESTING WEBHOOKS WITH NGROK again"
             }
         }
-        /*stage("SonarTest integration"){
+        stage("SonarTest integration"){
             steps{
                 withSonarQubeEnv(installationName: 'SonarQubeServer') {
                     sh "mvn sonar:sonar"
                 }
             }
-        }*/
+        }
         stage("Maven Package"){
             steps{
                 sh "mvn clean package"
