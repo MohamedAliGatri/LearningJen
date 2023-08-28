@@ -11,7 +11,7 @@ pipeline{
         }
         /*stage("SonarTest integration"){
             steps{
-                withSonarQubeEnv(installationName: 'sonar') {
+                withSonarQubeEnv(installationName: 'SonarQubeServer') {
                     sh "mvn sonar:sonar"
                 }
             }
@@ -24,12 +24,12 @@ pipeline{
             stage('Push to Nexus') {
               steps {
                 // Configure Nexus repository credentials
-                withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+                withCredentials([usernamePassword(credentialsId: 'nexus_credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
                   // Push JAR file to Nexus repository using Nexus Artifact Uploader plugin
                   nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: '192.168.0.2:8081',
+                    nexusUrl: '192.168.0.5:8081',
                     groupId: 'com.esprit.examen',
                     version: '1.0',
                     repository: 'learning',
