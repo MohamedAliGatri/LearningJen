@@ -52,14 +52,14 @@ pipeline{
           stage("login docker"){
             steps {
               withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
-              sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+              sh "echo $DOCKER_PASS | sudo docker login -u $DOCKER_USER --password-stdin"
               }
             }
           }
           stage("tag and push docekr image"){
             steps {
-              sh " docker build -t ${IMAGE_NAME} ."
-              sh "docker push ${IMAGE_NAME}"
+              sh "sudo docker build -t ${IMAGE_NAME} ."
+              sh "sudo docker push ${IMAGE_NAME}"
             }
           }
           
