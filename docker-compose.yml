@@ -1,0 +1,41 @@
+version: '3'
+services:
+  mySQL:
+    image: mysql:5.7
+    restart: unless-stopped
+#    env_file:
+#      - .env
+    environment:
+#      MYSQL_USER : root
+      MYSQL_ROOT_PASSWORD : password
+      MYSQL_DATABASE : db
+    ports:
+      - 3307:3306
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - net
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  app:
+    image: app:latest
+    environment:
+      DB_HOST: mySQL
+      DB_PORT: 3306
+      DB_NAME: db
+      DB_USERNAME: root
+      DB_PASSWORD: password
+    ports:
+      - "8089:8089"
+    depends_on:
+      - mySQL
+    networks:
+      - net
+networks:
+  net:
+    driver: bridge
+volumes:
+  db:
