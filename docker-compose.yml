@@ -15,11 +15,6 @@ services:
       - db:/var/lib/mysql
     networks:
       - net
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
   app:
     image: $IMAGE_NAME
     environment:
