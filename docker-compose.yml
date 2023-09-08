@@ -21,7 +21,7 @@ services:
     ports:
       - 8080:8080
   app:
-    image: app:latest
+    image: $IMAGE_NAME
     environment:
       DB_HOST: mySQL
       DB_PORT: 3306

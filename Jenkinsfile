@@ -65,6 +65,8 @@ pipeline{
           
           stage("deploy on jenkins server"){
             steps {
+              echo "Passing env var"
+              sh "envsubst < docker-compose.yml"
               sh "docker-compose up"
             }
           }
