@@ -37,6 +37,19 @@ data "aws_ami" "ubuntu_20_04" {
     values = ["x86_64"]
   }
 }
+data "aws_ami" "latest-amazon-linux-image" {
+    most_recent = true
+    owners = ["amazon"]
+    filter {
+        name = "name"
+        values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    }
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+}
+
 
 resource "aws_key_pair" "bastion-key-pair" {
     key_name ="${var.env_prefix}-bastion-key"
@@ -44,7 +57,7 @@ resource "aws_key_pair" "bastion-key-pair" {
 }
 
 resource "aws_instance" "bastion" {
-    ami = data.aws_ami.ubuntu_20_04.id
+    ami = data.aws_ami.latest-amazon-linux-image.id
     instance_type = var.instance_type
     subnet_id=var.subnet_id
     vpc_security_group_ids = [aws_security_group.jumpserver_sc.id]

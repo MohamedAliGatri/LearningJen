@@ -103,7 +103,13 @@ pipeline{
               }
             }
           }
-          
+          stage("terraform provisionning"){
+            steps{
+              script{
+                echo "hello"
+              }
+            }
+          }
           stage("deploy on jenkins server"){
             steps {
               script{
