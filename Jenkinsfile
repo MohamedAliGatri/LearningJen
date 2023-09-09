@@ -96,6 +96,13 @@ pipeline{
               }
             }
           }
+          stage("cleaning up"){
+            steps{
+              script{
+                sh "docker image rm ${IMAGE_NAME}:${APP_VERSION}"
+              }
+            }
+          }
           
           stage("deploy on jenkins server"){
             steps {
