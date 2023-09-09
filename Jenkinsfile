@@ -10,23 +10,29 @@ pipeline{
     stages{
         stage("Git checkOut"){
             steps{
+              script{
                 echo "TESTING WEBHOOKS WITH NGROK again"
+              }
             }
         }
         stage("Incrementing version"){
           steps{
-            sh 'mvn build-helper:parse-version versions:set \
+            script {
+              sh 'mvn build-helper:parse-version versions:set \
                 -DnewVersion= \\\${parsedVersion.majorVerion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}\
                 versions:commit'
-            def matcher = read("pom.xml") =~'<version>(.+)</version>'
-            def version = matcher[1][1]
-            //env.APP_VERSION="$version-$BUILD_NUMBER" some ADDS BUILD NUMBER TO VERSION
-            env.APP_VERSION="$version"
+              def matcher = read("pom.xml") =~'<version>(.+)</version>'
+              def version = matcher[1][1]
+              //env.APP_VERSION="$version-$BUILD_NUMBER" some ADDS BUILD NUMBER TO VERSION
+              env.APP_VERSION="$version"
+            }
           }
         }
         stage("Maven Package"){
             steps{
+              script{
                 sh "mvn clean package"
+              }
             }
         }
         stage("SonarTest integration"){
@@ -63,23 +69,29 @@ pipeline{
           }
           stage("login docker"){
             steps {
-              withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
-              sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+              script{
+                withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
+                  sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                }
               }
             }
           }
           stage("tag and push docekr image"){
             steps {
-              sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
-              sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
+              script{
+                sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
+                sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
+              }
             }
           }
           
           stage("deploy on jenkins server"){
             steps {
-              echo "Passing env var"
-              //sh "envsubst < docker-compose.yml"
-              //sh "docker-compose up"
+              script{
+                echo "Passing env var"
+                //sh "envsubst < docker-compose.yml"
+                //sh "docker-compose up"
+              }
             }
           }
 
