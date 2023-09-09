@@ -84,18 +84,6 @@ pipeline{
               }
             }
           }
-          stage("commit the version increment"){
-            steps{
-              script{
-                withCredentials([usernamePassword(credentialsId:'github_credentials',passwordVariable:'GIT_PASS',usernameVariable:'GIT_USER')]){
-                  sh "git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/MohamedAliGatri/LearningJen.git"
-                  sh "git add ."
-                  sh 'git commit -m "jenkins: version bump"'
-                  sh 'git push origin HEAD:aws-terraform-deploy'
-                }
-              }
-            }
-          }
           stage("cleaning up"){
             steps{
               script{
@@ -121,6 +109,18 @@ pipeline{
               }
             }
           }
+          stage("commit version increment - state file"){
+            steps{
+              script{
+                withCredentials([usernamePassword(credentialsId:'github_credentials',passwordVariable:'GIT_PASS',usernameVariable:'GIT_USER')]){
+                  sh "git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/MohamedAliGatri/LearningJen.git"
+                  sh "git add ."
+                  sh 'git commit -m "jenkins: version bump"'
+                  sh 'git push origin HEAD:aws-terraform-deploy'
+                }
+              }
+            }
+          }
           stage("deploy on ec2 server"){
             environment{
               DOCKER_CREDS = credentials('docker_credentials')
@@ -138,8 +138,6 @@ pipeline{
                        sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
                        sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                    }
-
-
               }
             }
           }
