@@ -4,13 +4,24 @@ pipeline{
         maven "M2_HOME"
     }
     environment {
-        IMAGE_NAME = 'gatrimohamedali/java-cicd-project:1.0'
+        IMAGE_NAME = 'gatrimohamedali/java-cicd-project'
     }
     stages{
         stage("Git checkOut"){
             steps{
                 echo "TESTING WEBHOOKS WITH NGROK again"
             }
+        }
+        stage("Incrementing version"){
+          steps{
+            sh 'mvn build-helper:parse-version versions:set \
+                -DnewVersion= \\\${parsedVersion.majorVerion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}\
+                versions:commit'
+            def matcher = read("pom.xml") =~'<version>(.+)</version>'
+            def version = matcher[0][1]
+            //env.APP_VERSION="$version-$BUILD_NUMBER" some ADDS BUILD NUMBER TO VERSION
+            env.APP_VERSION="$version"
+          }
         }
         stage("Maven Package"){
             steps{
@@ -34,14 +45,14 @@ pipeline{
                     protocol: 'http',
                     nexusUrl: '192.168.0.5:8081',
                     groupId: 'com.esprit.examen',
-                    version: '1.2',
+                    version: "${APP_VERSION}",
                     repository: 'learning',
                     credentialsId: 'nexus_credentials',
                     artifacts: [
                       [
                         artifactId: 'tpAchatProject',
                         classifier: '',
-                        file: 'target/tpAchatProject-1.0.jar',
+                        file: "target/tpAchatProject-${APP_VERSION}.jar",
                         type: 'jar'
                       ]
                     ]
@@ -58,16 +69,16 @@ pipeline{
           }
           stage("tag and push docekr image"){
             steps {
-              sh "docker build -t ${IMAGE_NAME} ."
-              sh "docker push ${IMAGE_NAME}"
+              sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
+              sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
             }
           }
           
           stage("deploy on jenkins server"){
             steps {
               echo "Passing env var"
-              sh "envsubst < docker-compose.yml"
-              sh "docker-compose up"
+              //sh "envsubst < docker-compose.yml"
+              //sh "docker-compose up"
             }
           }
 
