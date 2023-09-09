@@ -63,6 +63,7 @@ resource "aws_instance" "bastion" {
     vpc_security_group_ids = [aws_security_group.jumpserver_sc.id]
     key_name = aws_key_pair.bastion-key-pair.key_name
     associate_public_ip_address = true
+    user_data = file("./modules/jumpserver/entry-script.sh")
     tags = {
         Name : "${var.env_prefix}-bastion"
     }
