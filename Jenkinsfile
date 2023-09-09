@@ -18,7 +18,7 @@ pipeline{
                 -DnewVersion= \\\${parsedVersion.majorVerion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}\
                 versions:commit'
             def matcher = read("pom.xml") =~'<version>(.+)</version>'
-            def version = matcher[0][1]
+            def version = matcher[1][1]
             //env.APP_VERSION="$version-$BUILD_NUMBER" some ADDS BUILD NUMBER TO VERSION
             env.APP_VERSION="$version"
           }
