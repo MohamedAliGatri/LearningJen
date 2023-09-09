@@ -21,10 +21,10 @@ pipeline{
               sh 'mvn build-helper:parse-version versions:set \
                 -DnewVersion=" \\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}"\
                 versions:commit'
-              def matcher = read("pom.xml") =~'<version>(.+)</version>'
+              def matcher = readFile("pom.xml") =~'<version>(.+)</version>'
               def version = matcher[1][1]
               //env.APP_VERSION="$version-$BUILD_NUMBER" some ADDS BUILD NUMBER TO VERSION
-              env.APP_VERSION="$version"
+              env.APP_VERSION="$version".trim()
             }
           }
         }
@@ -81,6 +81,18 @@ pipeline{
               script{
                 sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
                 sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
+              }
+            }
+          }
+          stage("commit the version increment"){
+            steps{
+              script{
+                withCredentials([usernamePassword(credentialsId:'github_credentials',passwordVariable:'GIT_PASS',usernameVariable:'GIT_USER')]){
+                  sh "git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/MohamedAliGatri/LearningJen.git"
+                  sh "git add ."
+                  sh 'git commit -m "jenkins: version bump"'
+                  sh 'git push origin HEAD:aws-terraform-deploy'
+                }
               }
             }
           }
