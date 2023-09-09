@@ -28,7 +28,7 @@ pipeline{
             }
           }
         }
-        stage("Maven Package"){
+        /*stage("Maven Package"){
             steps{
               script{
                 sh "mvn clean package"
@@ -66,7 +66,7 @@ pipeline{
                   )
                 //}
             }
-          }
+          }*/
           stage("login docker"){
             steps {
               script{
