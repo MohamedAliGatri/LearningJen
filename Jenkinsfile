@@ -115,7 +115,7 @@ pipeline{
                 withCredentials([usernamePassword(credentialsId:'github_credentials',passwordVariable:'GIT_PASS',usernameVariable:'GIT_USER')]){
                   sh "git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/MohamedAliGatri/LearningJen.git"
                   sh "git add ."
-                  sh 'git commit -m "jenkins: version bump"'
+                  sh 'git commit -m "jenkins: version bump - state file commit"'
                   sh 'git push origin HEAD:aws-terraform-deploy'
                 }
               }
@@ -135,7 +135,7 @@ pipeline{
 
                 sshagent(['ssh_key_to_ec2']) {
                        sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user"
-                       sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
+                       sh "scp -o StrictHostKeyChecking=no docker-compose.yml ${ec2Instance}:/home/ec2-user"
                        sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                    }
               }
