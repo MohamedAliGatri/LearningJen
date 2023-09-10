@@ -124,13 +124,14 @@ pipeline{
           stage("deploy on ec2 server"){
             environment{
               DOCKER_CREDS = credentials('docker_credentials')
+              FULL_IMAGE_NAME = "${IMAGE_NAME}:${APP_VERSION}"
             }
             steps {
               script{
                 echo "waiting for the ec2 to initialize"
                 sleep(time: 90, unit: "SECONDS")
-
-                def shellCmd = "bash ./server-cmds.sh ${IMAGE_NAME} ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
+                
+                def shellCmd = "bash ./server-cmds.sh ${FULL_IMAGE_NAME} ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
                 def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
 
                 sshagent(['ssh_key_to_ec2']) {
