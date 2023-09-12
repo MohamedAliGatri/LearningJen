@@ -8,6 +8,18 @@ resource "aws_security_group" "jumpserver_sc" {
     protocol = "tcp"
     cidr_blocks = [var.my_ip]
   }
+  ingress {
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port = 8089
+    to_port = 8089
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port = 0
     to_port = 0
