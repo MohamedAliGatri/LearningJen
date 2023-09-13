@@ -110,7 +110,7 @@ pipeline{
               }
             }
           }
-          stage("commit version increment - state file"){
+          /*stage("commit version increment - state file"){
             environment{
               GITHUB_ACCESS_KEY = credentials('github_access_key')
             }
@@ -124,7 +124,7 @@ pipeline{
                 }
               }
             }
-          }
+          }*/
           stage("deploy on ec2 server"){
             environment{
               DOCKER_CREDS = credentials('docker_credentials')
