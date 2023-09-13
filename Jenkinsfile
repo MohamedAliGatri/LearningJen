@@ -110,10 +110,13 @@ pipeline{
             }
           }
           stage("commit version increment - state file"){
+            environment{
+              GITHUB_ACCESS_KEY = credentials('github_access_key')
+            }
             steps{
               script{
                 withCredentials([usernamePassword(credentialsId:'github_credentials',passwordVariable:'GIT_PASS',usernameVariable:'GIT_USER')]){
-                  sh "git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/MohamedAliGatri/LearningJen.git"
+                  sh "git remote set-url origin https://${GITHUB_ACCESS_KEY}@github.com/MohamedAliGatri/LearningJen.git"
                   sh "git add ."
                   sh 'git commit -m "jenkins: version bump - state file commit"'
                   sh 'git push origin HEAD:aws-terraform-deploy'
