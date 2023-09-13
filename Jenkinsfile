@@ -141,6 +141,7 @@ pipeline{
                   sh "pwd"
                   sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user"
                   sh "scp -o StrictHostKeyChecking=no docker-compose.yml ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no prometheus.yml ${ec2Instance}:/home/ec2-user"
                   sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
                 }
               }
