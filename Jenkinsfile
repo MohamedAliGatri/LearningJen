@@ -68,7 +68,7 @@ pipeline{
                 //}
             }
           }*/
-          stage("login docker"){
+          /*stage("login docker"){
             steps {
               script{
                 withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
@@ -76,7 +76,7 @@ pipeline{
                 }
               }
             }
-          }
+          }*/
           /*stage("tag and push docekr image"){
             steps {
               script{
@@ -139,21 +139,7 @@ pipeline{
                 def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
 
                 sshagent(['ssh_key_to_ec2']) {
-                  retries = 3  // Set the maximum number of retries
-                  while (retries > 0) {
-                      def exitCode = sh(
-                        script: "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user", 
-                        returnStatus: true
-                        )
-                      if (exitCode == 0) {
-                          echo "Command succeeded on attempt ${4 - retries}"
-                          break
-                      } else {
-                          echo "Command failed on attempt ${4 - retries}, retrying..."
-                          retries--
-                      }
-                  }
-                  //sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
                   sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:/home/ec2-user"
                   sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:/home/ec2-user"
                   sh "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=300 ${ec2Instance} ${shellCmd}"
