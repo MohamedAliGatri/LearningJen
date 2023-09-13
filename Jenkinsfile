@@ -138,13 +138,9 @@ pipeline{
                 def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
 
                 sshagent(['ssh_key_to_ec2']) {
-                  sh 'rsync -av -e "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=600" server-cmds.sh ec2-user@'+"${ec2Instance}:/home/ec2-user"
-                  sh 'rsync -av -e "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=600" docker-compose.yml ec2-user@'+"${ec2Instance}:/home/ec2-user"
-                  sh 'rsync -av -e "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=600" prometheus.yml ec2-user@'+"${ec2Instance}:/home/ec2-user"
-                  
-                  //sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
-                  //sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:/home/ec2-user"
-                  //sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:/home/ec2-user"
                   sh "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=300 ${ec2Instance} ${shellCmd}"
                 }
               }
