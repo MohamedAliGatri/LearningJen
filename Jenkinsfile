@@ -6,6 +6,7 @@ pipeline{
     }
     environment {
         IMAGE_NAME = 'gatrimohamedali/java-cicd-project'
+        APP_VERSION = 1.13
     }
     stages{
         stage("Git checkOut"){
@@ -15,7 +16,7 @@ pipeline{
               }
             }
         }
-        stage("Incrementing version"){
+        /*stage("Incrementing version"){
           steps{
             script {
               sh 'mvn build-helper:parse-version versions:set \
@@ -27,7 +28,7 @@ pipeline{
               env.APP_VERSION="$version".trim()
             }
           }
-        }
+        }*/
         /*stage("Maven Package"){
             steps{
               script{
@@ -76,7 +77,7 @@ pipeline{
               }
             }
           }
-          stage("tag and push docekr image"){
+          /*stage("tag and push docekr image"){
             steps {
               script{
                 sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
@@ -90,7 +91,7 @@ pipeline{
                 sh "docker image rm ${IMAGE_NAME}:${APP_VERSION}"
               }
             }
-          }
+          }*/
           stage("terraform provisioning"){
             environment{
               AWS_ACCESS_KEY_ID = credentials('aws_access_key')
