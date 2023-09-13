@@ -132,17 +132,17 @@ pipeline{
             steps {
               script{
                 echo "waiting for the ec2 to initialize"
-                sleep(time: 90, unit: "SECONDS")
+                sleep(time: 110, unit: "SECONDS")
                 
                 def shellCmd = "bash ./server-cmds.sh ${FULL_IMAGE_NAME} ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
                 def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
 
                 sshagent(['ssh_key_to_ec2']) {
                   sh "pwd"
-                  sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user"
-                  sh "scp -o StrictHostKeyChecking=no docker-compose.yml ${ec2Instance}:/home/ec2-user"
-                  sh "scp -o StrictHostKeyChecking=no prometheus.yml ${ec2Instance}:/home/ec2-user"
-                  sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:/home/ec2-user"
+                  sh "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=300 ${ec2Instance} ${shellCmd}"
                 }
               }
             }
