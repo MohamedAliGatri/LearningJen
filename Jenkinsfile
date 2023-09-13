@@ -6,7 +6,6 @@ pipeline{
     }
     environment {
         IMAGE_NAME = 'gatrimohamedali/java-cicd-project'
-        APP_VERSION = 1.13
     }
     stages{
         stage("FS trivy scan"){
@@ -50,49 +49,52 @@ pipeline{
                 }
             }
         }
-        stage("Parallel Pushing"){
-          parallel{
-            stage('Push to Nexus') {
-                steps {
-                    // Configure Nexus repository credentials
-                    //withCredentials([usernamePassword(credentialsId: 'nexus_credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
-                      // Push JAR file to Nexus repository using Nexus Artifact Uploader plugin
-                      nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '192.168.0.5:8081',
-                        groupId: 'com.esprit.examen',
-                        version: "${APP_VERSION}",
-                        repository: 'learning',
-                        credentialsId: 'nexus_credentials',
-                        artifacts: [
-                          [
-                            artifactId: 'tpAchatProject',
-                            classifier: '',
-                            file: "target/tpAchatProject-${APP_VERSION}.jar",
-                            type: 'jar'
-                          ]
-                        ]
-                      )
-                    //}
+        stage('Push to Nexus') {
+            steps {
+                // Configure Nexus repository credentials
+                //withCredentials([usernamePassword(credentialsId: 'nexus_credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+                  // Push JAR file to Nexus repository using Nexus Artifact Uploader plugin
+                  nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: '192.168.0.5:8081',
+                    groupId: 'com.esprit.examen',
+                    version: "${APP_VERSION}",
+                    repository: 'learning',
+                    credentialsId: 'nexus_credentials',
+                    artifacts: [
+                      [
+                        artifactId: 'tpAchatProject',
+                        classifier: '',
+                        file: "target/tpAchatProject-${APP_VERSION}.jar",
+                        type: 'jar'
+                      ]
+                    ]
+                  )
+                //}
+            }
+          }
+          stage("login & build docker"){
+            steps {
+              script{
+                withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
+                  sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                  sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
                 }
               }
-              stage("login docker"){
-                steps {
-                  script{
-                    withCredentials([usernamePassword(credentialsId:'docker_credentials', passwordVariable:'DOCKER_PASS', usernameVariable:'DOCKER_USER')]){
-                      sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    }
-                  }
-                }
+            }
+          }
+          stage("Trivy scan image"){
+            steps{
+              script{
+                sh "trivy image ${IMAGE_NAME}:${APP_VERSION}"
               }
-              stage("tag and push docekr image"){
-                steps {
-                  script{
-                    sh "docker build -t ${IMAGE_NAME}:${APP_VERSION} ."
-                    sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
-                  }
-                }
+            }
+          }
+          stage("tag and push docekr image"){
+            steps {
+              script{
+                sh "docker push ${IMAGE_NAME}:${APP_VERSION}"
               }
             }
           }
