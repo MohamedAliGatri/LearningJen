@@ -22,6 +22,13 @@ pipeline{
               }
             }
         }
+        stage("SonarTest integration"){
+            steps{
+                withSonarQubeEnv(installationName: 'SonarQubeServer') {
+                    sh "mvn sonar:sonar"
+                }
+            }
+        }
         stage("Incrementing version"){
           steps{
             script {
@@ -40,13 +47,6 @@ pipeline{
               script{
                 sh "mvn clean package"
               }
-            }
-        }
-        stage("SonarTest integration"){
-            steps{
-                withSonarQubeEnv(installationName: 'SonarQubeServer') {
-                    sh "mvn sonar:sonar"
-                }
             }
         }
         stage('Push to Nexus') {
@@ -146,7 +146,7 @@ pipeline{
             steps {
               script{
                 echo "waiting for the ec2 to initialize"
-                sleep(time: 90, unit: "SECONDS")
+                sleep(time: 180, unit: "SECONDS")
                 
                 def shellCmd = "bash ./server-cmds.sh ${FULL_IMAGE_NAME} ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
                 def ec2Instance = "ubuntu@${EC2_PUBLIC_IP}"
