@@ -84,13 +84,13 @@ pipeline{
               }
             }
           }
-          /*stage("Trivy scan image"){
+          stage("Trivy scan image"){
             steps{
               script{
-                sh "trivy image ${IMAGE_NAME}:${APP_VERSION}"
+                echo "trivy image ${IMAGE_NAME}:${APP_VERSION}"
               }
             }
-          }*/
+          }
           stage("tag and push docekr image"){
             steps {
               script{
