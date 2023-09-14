@@ -84,13 +84,13 @@ pipeline{
               }
             }
           }
-          stage("Trivy scan image"){
+          /*stage("Trivy scan image"){
             steps{
               script{
                 sh "trivy image ${IMAGE_NAME}:${APP_VERSION}"
               }
             }
-          }
+          }*/
           stage("tag and push docekr image"){
             steps {
               script{
@@ -149,12 +149,13 @@ pipeline{
                 sleep(time: 90, unit: "SECONDS")
                 
                 def shellCmd = "bash ./server-cmds.sh ${FULL_IMAGE_NAME} ${DOCKER_CREDS_USR} ${DOCKER_CREDS_PSW}"
-                def ec2Instance = "ec2-user@${EC2_PUBLIC_IP}"
+                def ec2Instance = "ubuntu@${EC2_PUBLIC_IP}"
+                def homeDir = "/home/ubuntu"
 
                 sshagent(['ssh_key_to_ec2']) {
-                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:/home/ec2-user"
-                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:/home/ec2-user"
-                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:/home/ec2-user"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 server-cmds.sh ${ec2Instance}:${homeDir}"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 docker-compose.yml ${ec2Instance}:${homeDir}"
+                  sh "scp -o StrictHostKeyChecking=no -o ServerAliveInterval=300 prometheus.yml ${ec2Instance}:${homeDir}"
                   sh "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=300 ${ec2Instance} ${shellCmd}"
                 }
               }

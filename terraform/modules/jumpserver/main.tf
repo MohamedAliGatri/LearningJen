@@ -69,7 +69,7 @@ resource "aws_key_pair" "bastion-key-pair" {
 }
 
 resource "aws_instance" "bastion" {
-    ami = data.aws_ami.latest-amazon-linux-image.id
+    ami = data.aws_ami.ubuntu_20_04.id
     instance_type = var.instance_type
     subnet_id=var.subnet_id
     vpc_security_group_ids = [aws_security_group.jumpserver_sc.id]
