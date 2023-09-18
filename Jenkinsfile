@@ -87,7 +87,7 @@ pipeline{
           stage("Trivy scan image"){
             steps{
               script{
-                echo "trivy image ${IMAGE_NAME}:${APP_VERSION}"
+                sh "trivy image ${IMAGE_NAME}:${APP_VERSION}"
               }
             }
           }
